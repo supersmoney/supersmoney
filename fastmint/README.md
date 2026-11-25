@@ -24,8 +24,8 @@ dan melaporkan — tidak ada auto-retry broadcast.
 
 | Wallet | Alamat | Pegang kunci | Dipakai untuk |
 |---|---|---|---|
-| Agent WL NFT | `0x5A3BC989398376CC8C6B4ed0c7D8e906EF11a786` | Muse (keystore terenkripsi di `keys/wl-nft-agent-keystore.json`, password di `keys/.keystore-pass`, keduanya 0600) | Mode **otomatis** — hanya kalau WL terdaftar atas alamat ini |
-| User (Phantom) | `0x692409469ea47502D2738F1b2b0f0da1d9926e74` | User (seed dipegang user) | Mode **approve** — sistem hanya menyiapkan tx, user approve sendiri. Sistem **tidak pernah** sign dengan wallet ini, dan tidak pernah minta seed / private key user. |
+| Agent WL NFT | `<alamat-wallet-agent-kamu>` | Muse kamu (keystore terenkripsi di `keys/`, password di file terpisah, keduanya 0600) | Mode **otomatis** — hanya kalau WL terdaftar atas alamat ini |
+| User (Phantom) | `<alamat-wallet-kamu>` | User (seed dipegang user) | Mode **approve** — sistem hanya menyiapkan tx, user approve sendiri. Sistem **tidak pernah** sign dengan wallet ini, dan tidak pernah minta seed / private key user. |
 
 Satu alamat EVM berlaku di semua chain EVM. Yang dipisah per chain adalah
 config gas + funding (token gas tiap chain beda, kepadatan user beda).
@@ -136,26 +136,33 @@ wallet agent.
    - Semua hasil dicatat ke logs/mint-checks.jsonl (JSONL, tanpa secret).
 ```
 
-## Cara pakai
+## Cara pakai (untuk pengguna baru)
 
-Dari `~/workspace/wl-nft`, pakai venv airdrop-agent (web3, eth_account,
-yaml, requests sudah ada di sana):
+Repo ini template — semua yang berisi data pribadi **sudah dikosongkan**,
+kamu isi sendiri dengan panduan Muse AI kamu:
+
+1. **Buat 1 wallet khusus mint** (jangan pakai wallet utama). Simpan
+   keystore-nya di `keys/`, jangan pernah push `keys/` ke GitHub.
+2. **Isi `config/chains.yaml`** — alamat wallet agent + wallet kamu di
+   bagian `wallets`, dan batas gas per chain.
+3. **Isi `projects/<nama>.yaml`** — salin dari `projects/example.yaml`,
+   isi alamat kontrak + `official_website` + `mint_url` dari website
+   resmi proyek (bukan dari DM).
+4. **Jalankan dry-run dulu** (butuh Python + `web3`, `eth_account`,
+   `yaml`, `requests`):
 
 ```bash
-cd ~/workspace/wl-nft
-PY=~/workspace/airdrop-agent/.venv/bin/python
-
 # 1. Cek kontrak (dry-run, tanpa sign, tanpa kirim dana)
-$PY -m fastmint.check_mint --chain ethereum --contract 0x... --mode dry-run --tier seimbang
+python -m fastmint.check_mint --chain ethereum --contract 0x... --mode dry-run --tier seimbang
 
 # 2. Dari file project
-$PY -m fastmint.check_mint --project projects/nama-project.yaml --mode dry-run --tier hemat
+python -m fastmint.check_mint --project projects/nama-project.yaml --mode dry-run --tier hemat
 
 # 3. Siapkan tx untuk di-approve user (wallet user)
-$PY -m fastmint.check_mint --project projects/nama-project.yaml --mode approve --tier cepat
+python -m fastmint.check_mint --project projects/nama-project.yaml --mode approve --tier cepat
 
 # 4. Auto + live (wallet agent saja; tetap minta ketik MINT)
-$PY -m fastmint.check_mint --project projects/nama-project.yaml --mode auto --tier cepat --live
+python -m fastmint.check_mint --project projects/nama-project.yaml --mode auto --tier cepat --live
 ```
 
 Exit code `check_mint`: `0` = READY, `2` = website FAIL / safety FAIL /
