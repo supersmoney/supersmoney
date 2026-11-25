@@ -5,11 +5,12 @@ lolos website gate + safety gate + gas di bawah cap + simulasi `eth_call`
 sebelum ada transaksi yang dikirim. Kalau satu saja gagal, sistem berhenti
 dan melaporkan — tidak ada auto-retry broadcast.
 
-> Status: v1.1 lokal, **belum di-push ke GitHub**. Folder ini nantinya masuk
-> ke monorepo `supersmoney/supersmoney` sebagai folder `fastmint/`
-> (satu repo, banyak project, masing-masing folder sendiri; root README
-> repo tetap README profil). Push hanya setelah build + dry-run test lolos,
-> dan **tidak pernah** membawa `keys/`, keystore, `.keystore-pass`, `.env`,
+> Status: v1.1, sudah di GitHub sebagai folder `fastmint/` di monorepo
+> `supersmoney/supersmoney` (satu repo, banyak project, masing-masing
+> folder sendiri; root README repo tetap README profil).
+> Repo ini template — data pribadi (alamat wallet, keystore, `keys/`)
+> TIDAK ikut di-push, lihat "Cara pakai (untuk pengguna baru)" di bawah.
+> Push **tidak pernah** membawa `keys/`, keystore, `.keystore-pass`, `.env`,
 > seed, atau private key (lihat `.gitignore`).
 >
 > Yang baru di v1.1 (25 Nov 2026): website gate anti-phishing
@@ -19,22 +20,12 @@ dan melaporkan — tidak ada auto-retry broadcast.
 > re-check gas/nonce/simulasi/harga sesaat sebelum signing live, dan
 > verifikasi balanceOf sesudah mint. Detail di bawah.
 
-## Cara pakai (untuk pengguna baru)
-
-Repo ini template — semua yang berisi data pribadi **sudah dikosongkan**, kamu isi sendiri dengan panduan Muse AI kamu:
-
-1. **Buat 1 wallet khusus mint** (jangan pakai wallet utama). Simpan keystore-nya di `keys/`, jangan pernah push `keys/` ke GitHub.
-2. **Isi `config/chains.yaml`** — alamat wallet agent + wallet kamu di bagian `wallets`, dan batas gas per chain.
-3. **Isi `projects/<nama>.yaml`** — salin dari `projects/example.yaml`, isi alamat kontrak + `official_website` + `mint_url` dari website resmi proyek (bukan dari DM).
-4. **Jalankan dry-run dulu**: `python -m fastmint.check_mint --chain <chain> --contract <alamat> --mode dry-run --project projects/<nama>.yaml` — harus PASS semua gate sebelum mint.
-5. **Baru mint** — mode otomatis (wallet agent) atau mode approve (wallet kamu approve sendiri di Phantom/browser). Jangan pernah kirim seed / private key ke siapa pun, termasuk ke AI.
-
 ## Wallet
 
 | Wallet | Alamat | Pegang kunci | Dipakai untuk |
 |---|---|---|---|
-| Agent WL NFT | `<alamat-wallet-agent-kamu>` | Muse kamu (keystore terenkripsi di `keys/`, password di file terpisah, keduanya 0600) | Mode **otomatis** — hanya kalau WL terdaftar atas alamat ini |
-| User (Phantom) | `<alamat-wallet-kamu>` | User (seed dipegang user) | Mode **approve** — sistem hanya menyiapkan tx, user approve sendiri. Sistem **tidak pernah** sign dengan wallet ini, dan tidak pernah minta seed / private key user. |
+| Agent WL NFT | `0x5A3BC989398376CC8C6B4ed0c7D8e906EF11a786` | Muse (keystore terenkripsi di `keys/wl-nft-agent-keystore.json`, password di `keys/.keystore-pass`, keduanya 0600) | Mode **otomatis** — hanya kalau WL terdaftar atas alamat ini |
+| User (Phantom) | `0x692409469ea47502D2738F1b2b0f0da1d9926e74` | User (seed dipegang user) | Mode **approve** — sistem hanya menyiapkan tx, user approve sendiri. Sistem **tidak pernah** sign dengan wallet ini, dan tidak pernah minta seed / private key user. |
 
 Satu alamat EVM berlaku di semua chain EVM. Yang dipisah per chain adalah
 config gas + funding (token gas tiap chain beda, kepadatan user beda).
@@ -321,6 +312,7 @@ Satu baris JSON per pengecekan / eksekusi, tanpa secret:
 - Project WL pertama yang mau dicoba fastmint ini (isi
   `projects/<nama>.yaml` dari sumber resmi — ingat isi
   `official_website` + `mint_url`-nya).
-- Push ke GitHub: masih lokal, belum di-push. (Catatan: push v1 sempat
-  gagal 403 karena instalasi GitHub App belum mencakup repo — itu
-  urusan user di pengaturan GitHub, bukan urusan kode di sini.)
+- Push ke GitHub: sudah di-push sebagai folder `fastmint/` di
+  `supersmoney/supersmoney` (commit pertama v1.1). (Catatan: push v1 sempat
+  gagal 403 karena instalasi GitHub App belum mencakup repo — diperbaiki
+  user dengan install App + centang repo.)
