@@ -1,0 +1,191 @@
+# Fastmint WL NFT — profil per chain (v1)
+#
+# ATURAN:
+# - Satu alamat EVM berlaku di SEMUA chain di bawah ini. Yang dipisah per
+#   chain adalah: RPC, explorer, token gas, dan batas biaya gas.
+# - Nilai `max_total_fee_native` di bawah ini adalah PLACEHOLDER KONSERVATIF,
+#   BUKAN harga live. Harga gas dibaca live dari RPC saat mint (base fee +
+#   priority fee). Placeholder ini wajib dicek/disetujui user sebelum mint
+#   pertama di tiap chain, dan harus direview berkala karena harga token gas
+#   berubah.
+# - RPC di bawah ini adalah endpoint PUBLIK tanpa API key. Kalau ada yang
+#   mati / rate-limit, ganti ke RPC lain atau isi `rpc_api_key` sendiri.
+#   JANGAN pernah menulis API key / secret di file ini — pakai env var.
+# - Chain yang bertanda `verification: manual` (Robinhood, LitVM) belum
+#   terverifikasi bisa dicek otomatis di VM ini (Sourcify belum tentu
+#   mendukung chain-nya). Untuk chain itu safety checker akan FAIL sampai
+#   ada sumber verifikasi yang bisa diuji. Jangan dipaksa PASS manual.
+
+chains:
+  ethereum:
+    display: "Ethereum Mainnet"
+    chain_id: 1
+    eip1559: true
+    rpc:
+      - "https://eth.drpc.org"
+      - "https://1rpc.io/eth"
+      - "https://ethereum-rpc.publicnode.com"
+    explorer: "https://etherscan.io"
+    explorer_api: "https://api.etherscan.io/v2/api"  # butuh API key (env ETHERSCAN_API_KEY)
+    sourcify_chain_id: 1
+    native_token: "ETH"
+    native_decimals: 18
+    verification: "sourcify"   # Sourcify v2, tanpa API key
+    # Tier gas: pengali base fee + persentil priority fee (lihat fastmint/gas.py)
+    gas:
+      hemat:     {base_fee_multiplier: 1.05, priority_percentile: 10, priority_boost_gwei: 0}
+      seimbang:  {base_fee_multiplier: 1.15, priority_percentile: 50, priority_boost_gwei: 0}
+      cepat:     {base_fee_multiplier: 1.30, priority_percentile: 90, priority_boost_gwei: 2}
+      default_gas_limit: 200000
+      # PLACEHOLDER — konfirmasi user sebelum mint mainnet pertama.
+      # 0.01 ETH ≈ mint 200k gas di ~50 gwei. Free mint tetap bayar gas.
+      max_total_fee_native: 0.01
+
+  base:
+    display: "Base"
+    chain_id: 8453
+    eip1559: true
+    rpc:
+      - "https://mainnet.base.org"
+      - "https://base.llamarpc.com"
+    explorer: "https://basescan.org"
+    explorer_api: "https://api.basescan.org/api"
+    sourcify_chain_id: 8453
+    native_token: "ETH"
+    native_decimals: 18
+    verification: "sourcify"
+    gas:
+      hemat:     {base_fee_multiplier: 1.05, priority_percentile: 10, priority_boost_gwei: 0}
+      seimbang:  {base_fee_multiplier: 1.15, priority_percentile: 50, priority_boost_gwei: 0}
+      cepat:     {base_fee_multiplier: 1.30, priority_percentile: 90, priority_boost_gwei: 0}
+      default_gas_limit: 200000
+      max_total_fee_native: 0.001   # PLACEHOLDER
+
+  bsc:
+    display: "BNB Smart Chain"
+    chain_id: 56
+    eip1559: false   # BSC memakai gasPrice legacy (walau eth_feeHistory tersedia)
+    rpc:
+      - "https://bsc-dataseed.binance.org"
+      - "https://bsc.publicnode.com"
+    explorer: "https://bscscan.com"
+    explorer_api: "https://api.bscscan.com/api"
+    sourcify_chain_id: 56
+    native_token: "BNB"
+    native_decimals: 18
+    verification: "sourcify"
+    gas:
+      hemat:     {base_fee_multiplier: 1.0, priority_percentile: 10, priority_boost_gwei: 0}
+      seimbang:  {base_fee_multiplier: 1.0, priority_percentile: 50, priority_boost_gwei: 0}
+      cepat:     {base_fee_multiplier: 1.0, priority_percentile: 90, priority_boost_gwei: 1}
+      default_gas_limit: 200000
+      max_total_fee_native: 0.005   # PLACEHOLDER (BNB)
+
+  arbitrum:
+    display: "Arbitrum One"
+    chain_id: 42161
+    eip1559: true
+    rpc:
+      - "https://arb1.arbitrum.io/rpc"
+      - "https://arbitrum.publicnode.com"
+    explorer: "https://arbiscan.io"
+    explorer_api: "https://api.arbiscan.io/api"
+    sourcify_chain_id: 42161
+    native_token: "ETH"
+    native_decimals: 18
+    verification: "sourcify"
+    gas:
+      hemat:     {base_fee_multiplier: 1.05, priority_percentile: 10, priority_boost_gwei: 0}
+      seimbang:  {base_fee_multiplier: 1.15, priority_percentile: 50, priority_boost_gwei: 0}
+      cepat:     {base_fee_multiplier: 1.30, priority_percentile: 90, priority_boost_gwei: 0}
+      default_gas_limit: 300000   # L2: gas limit mentah lebih besar, harga per gas jauh lebih murah
+      max_total_fee_native: 0.001   # PLACEHOLDER
+
+  optimism:
+    display: "OP Mainnet"
+    chain_id: 10
+    eip1559: true
+    rpc:
+      - "https://mainnet.optimism.io"
+      - "https://optimism.publicnode.com"
+    explorer: "https://optimistic.etherscan.io"
+    explorer_api: "https://api-optimistic.etherscan.io/api"
+    sourcify_chain_id: 10
+    native_token: "ETH"
+    native_decimals: 18
+    verification: "sourcify"
+    gas:
+      hemat:     {base_fee_multiplier: 1.05, priority_percentile: 10, priority_boost_gwei: 0}
+      seimbang:  {base_fee_multiplier: 1.15, priority_percentile: 50, priority_boost_gwei: 0}
+      cepat:     {base_fee_multiplier: 1.30, priority_percentile: 90, priority_boost_gwei: 0}
+      default_gas_limit: 300000
+      max_total_fee_native: 0.001   # PLACEHOLDER
+
+  polygon:
+    display: "Polygon PoS"
+    chain_id: 137
+    eip1559: true
+    rpc:
+      - "https://polygon-rpc.com"
+      - "https://polygon.publicnode.com"
+    explorer: "https://polygonscan.com"
+    explorer_api: "https://api.polygonscan.com/api"
+    sourcify_chain_id: 137
+    native_token: "POL"
+    native_decimals: 18
+    verification: "sourcify"
+    gas:
+      hemat:     {base_fee_multiplier: 1.05, priority_percentile: 10, priority_boost_gwei: 0}
+      seimbang:  {base_fee_multiplier: 1.15, priority_percentile: 50, priority_boost_gwei: 0}
+      cepat:     {base_fee_multiplier: 1.30, priority_percentile: 90, priority_boost_gwei: 5}
+      default_gas_limit: 200000
+      max_total_fee_native: 1.0   # PLACEHOLDER (POL, gas Polygon murah tapi fluktuatif)
+
+  robinhood:
+    display: "Robinhood Chain"
+    chain_id: null   # TBA — verifikasi chainId resmi sebelum dipakai
+    eip1559: true
+    rpc: []          # TBA — isi RPC resmi setelah diumumkan project / docs
+    explorer: ""     # TBA
+    explorer_api: ""
+    sourcify_chain_id: null
+    native_token: "TBA"
+    native_decimals: 18
+    verification: "manual"   # belum bisa dicek otomatis di v1 → safety FAIL sampai ada sumber verifikasi
+    gas:
+      hemat:     {base_fee_multiplier: 1.05, priority_percentile: 10, priority_boost_gwei: 0}
+      seimbang:  {base_fee_multiplier: 1.15, priority_percentile: 50, priority_boost_gwei: 0}
+      cepat:     {base_fee_multiplier: 1.30, priority_percentile: 90, priority_boost_gwei: 0}
+      default_gas_limit: 200000
+      max_total_fee_native: null   # TBA — tentukan setelah token gas + harga diketahui
+
+  litvm:
+    display: "LitVM LiteForge Testnet"
+    chain_id: 4441
+    eip1559: true
+    rpc:
+      - "https://rpc.testnet.litvm.com"   # PLACEHOLDER — verifikasi dari hub testnet.litvm.com sebelum dipakai
+    explorer: "https://testnet.litvm.com"
+    explorer_api: ""
+    sourcify_chain_id: null
+    native_token: "zkLTC"
+    native_decimals: 18
+    verification: "manual"   # testnet — pakai untuk latihan fastmint sebelum mainnet
+    gas:
+      hemat:     {base_fee_multiplier: 1.05, priority_percentile: 10, priority_boost_gwei: 0}
+      seimbang:  {base_fee_multiplier: 1.15, priority_percentile: 50, priority_boost_gwei: 0}
+      cepat:     {base_fee_multiplier: 1.30, priority_percentile: 90, priority_boost_gwei: 0}
+      default_gas_limit: 200000
+      max_total_fee_native: 0.05   # PLACEHOLDER (zkLTC testnet, bukan uang asli)
+
+# Wallet yang dipakai sistem ini. JANGAN tulis private key / seed di sini.
+wallets:
+  agent_wl_nft:
+    address: "GANTI_DENGAN_ALAMAT_WALLET_AGENT_ANDA"  # contoh: "0x..." — wallet khusus mint, JANGAN pakai wallet utama
+    keystore: "keys/wl-nft-agent-keystore.json"  # path relatif dari folder fastmint/
+    keystore_pass_file: "keys/.keystore-pass"  # path relatif dari folder fastmint/
+    purpose: "WL NFT mint — mode otomatis saja. Hanya dipakai kalau WL terdaftar atas alamat ini."
+  user:
+    address: "GANTI_DENGAN_ALAMAT_WALLET_KAMU"  # contoh: "0x..." — wallet yang kamu pegang seed-nya
+    purpose: "Wallet user (Phantom, seed dipegang user). Mode approve saja — sistem TIDAK PERNAH sign dengan wallet ini."
+    note: "Jangan pernah minta seed / private key wallet ini."

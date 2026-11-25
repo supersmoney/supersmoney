@@ -1,0 +1,40 @@
+# TEMPLATE per-mint — salin file ini ke projects/<nama-project>.yaml dan isi.
+# JANGAN isi alamat kontrak dari DM / grup random. Alamat kontrak HANYA dari
+# sumber resmi project (website resmi / X resmi / Discord resmi) dan harus
+# dicocokkan di minimal 2 sumber sebelum mint.
+#
+# Cara pakai:
+#   python -m fastmint.check_mint --project projects/<nama-project>.yaml --mode dry-run --tier seimbang
+#   # kalau READY dan mau approve manual:
+#   python -m fastmint.check_mint --project projects/<nama-project>.yaml --mode approve --tier cepat
+#   # kalau READY dan mau auto (wallet agent) + live:
+#   python -m fastmint.check_mint --project projects/<nama-project>.yaml --mode auto --tier cepat --live
+#   # (live tetap minta ketik MINT sebagai konfirmasi)
+
+# --- WAJIB ---
+project: "CONTOH-PROJECT"          # nama project, bebas
+chain: "ethereum"                  # nama chain di config/chains.yaml
+contract: "0x0000000000000000000000000000000000000000"  # <-- GANTI dengan alamat resmi. 0x0... ini sengaja palsu → safety FAIL.
+wallet: "agent"                    # "agent" (mode auto) atau "user" (mode approve)
+quantity: 1
+
+# --- WAJIB (website gate anti-phishing, v1.1) ---
+# Tanpa official_website, website gate FAIL dan mint dibatalkan — jangan bypass.
+# Isi HANYA dari X / Discord resmi project. JANGAN isi dari DM / grup random /
+# hasil pencarian berbayar — link dari DM tidak pernah jadi sumber resmi.
+official_website: ""               # domain resmi SAJA, contoh: "opensea.io" (tanpa https://, tanpa path)
+official_x: ""                     # contoh: "https://x.com/namaproject" (opsional, validasi ringan)
+official_discord: ""               # contoh: "https://discord.gg/kodeinvite" (opsional)
+mint_url: ""                       # URL halaman mint yang mau dipakai, contoh: "https://opensea.io/..."
+                                   # Harus HTTPS + host SAMA PERSIS dengan official_website.
+                                   # Kosong = gate memeriksa homepage domain resmi saja.
+
+# --- OPSIONAL (isi kalau diketahui dari docs resmi project) ---
+mint_function: ""                  # contoh: "publicSaleMint" / "allowlistMint" / "mint". Kosong = auto-detect dari ABI.
+mint_args: null                    # contoh: [1]. Kosong = pakai quantity untuk fungsi 1-arg uint.
+mint_price_wei: 0                  # harga mint per NFT dalam wei. 0 = free mint (tetap bayar gas).
+expected_name: ""                  # contoh: "Contoh NFT". Kalau diisi, dicocokkan dengan name() on-chain.
+expected_symbol: ""                # contoh: "CNFT". Kalau diisi, dicocokkan dengan symbol() on-chain.
+wl_proof: ""                       # Merkle proof / signature WL (kalau mint WL butuh proof, isi di sini — JANGAN share ke orang lain)
+source_official: ""                # link sumber resmi alamat kontrak (website / X post resmi)
+notes: "Template kosong — JANGAN dipakai untuk mint asli sebelum semua field WAJIB terisi dan safety PASS."

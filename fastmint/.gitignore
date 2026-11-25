@@ -1,0 +1,18 @@
+# Fastmint WL NFT — JANGAN PERNAH push secret ke GitHub.
+# File ini disiapkan untuk saat folder ini masuk ke monorepo
+# supersmoney/supersmoney (folder fastmint/) — push HANYA setelah
+# build + dry-run test lolos, dan tetap tanpa file di bawah ini.
+keys/
+*.keystore
+.keystore-pass
+.env
+*.pem
+*.key
+__pycache__/
+*.pyc
+logs/*.jsonl
+# Project yaml per-mint bisa berisi wl_proof / signature WL (kredensial yang
+# memberi hak mint atas wallet itu) — JANGAN PERNAH ter-push ke repo publik.
+# Hanya template contoh yang boleh ikut.
+projects/*.yaml
+!projects/example.yaml
